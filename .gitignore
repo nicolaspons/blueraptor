@@ -1,0 +1,6 @@
+node_modules/
+blueraptor/
+.vscode/
+__pycache__
+15minutes.csv
+config.py
