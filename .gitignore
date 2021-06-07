@@ -1,6 +1,8 @@
 node_modules/
 blueraptor/
 .vscode/
+.DS_Store
 __pycache__
 15minutes.csv
+2012-2021_5m.csv
 config.py
