@@ -38,7 +38,7 @@ fetch('http://localhost:5000/history')
 	.then((response) => {
 		candleSeries.setData(response)
 		candleSeries.setMarkers(addMarkers(response))
-	})
+	}).catch((error) => console.log())
 
 var binanceSocket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_15m')
 binanceSocket.onmessage = (event) => {
