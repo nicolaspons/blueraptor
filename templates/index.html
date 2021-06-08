@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <title>{{ title }}</title>
+    </head>
+    <body>
+        <h1>{{ title }}</h1>
+        <h2>Chart:</h2>
+        <div id='chart'></div>
+        <div id='balance'>
+            <h2>Balances</h2>
+            <table>
+                {% for balance in balances %}
+                <tr>
+                    <td>
+                        {{ balance['asset'] }}
+                    </td>
+                    <td>
+                        {{ balance['free'] }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <h2>Price:</h2>
+        <p>
+            current: <span id='current'>0</span>$
+        </p>
+        <script src='https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js'></script>
+        <script src="{{ url_for('static', filename='chart.js') }}"></script>
+    </body>
+</html>
