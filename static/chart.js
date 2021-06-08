@@ -37,6 +37,7 @@ fetch('http://localhost:5000/history')
 	.then((r) => r.json())
 	.then((response) => {
 		candleSeries.setData(response)
+		candleSeries.setMarkers(addMarkers(response))
 	})
 
 var binanceSocket = new WebSocket('wss://stream.binance.com:9443/ws/btcusdt@kline_15m')
@@ -50,4 +51,21 @@ binanceSocket.onmessage = (event) => {
 		low: candlestick.l,
 		close: candlestick.c
 	})
+}
+function addMarkers(candlesticks) {
+	var markers = []
+	console.log(candlesticks)
+	for (var i = 0; i < candlesticks.length; ++i) {
+		if (candlesticks[i].close < 31500) {
+			console.log(candlesticks[i])
+			markers.push({
+				time: candlesticks[i].time,
+				position: 'belowBar',
+				color: '#e91e63',
+				shape: 'arrowUp',
+				text: 'Buy @ ' + Math.floor(candlesticks[i].close)
+			});
+		}
+	}
+	return markers
 }

@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify
 import config, csv
 from binance.client import Client
+import numpy as np
+import tools
 
 app = Flask(__name__)
 
@@ -11,8 +13,17 @@ client = Client(config.API_KEY, config.SECRET_KEY)
 def index():
     title = "CoinBot"
 
-    info = client.get_account()
-    return render_template("index.html", title=title, balances=info["balances"])
+    account = client.get_account()
+    balances = account["balances"]
+    tools.sort_balances(balances)
+    exchange_info = client.get_exchange_info()
+
+    return render_template(
+        "index.html",
+        title=title,
+        balances=balances[:10],
+        symbols=exchange_info["symbols"],
+    )
 
 
 @app.route("/buy")
