@@ -1,5 +1,7 @@
 python-binance
 TA-Lib
 numpy
+pandas
 backtrader
+matplotlib==3.3.2
 flask
