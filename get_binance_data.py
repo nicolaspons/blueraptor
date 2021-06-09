@@ -7,11 +7,11 @@ dir_path = "./data"
 
 client = Client(config.API_KEY, config.SECRET_KEY)
 
-csvfile = open(os.path.join(dir_path, "BTCUSDT_4H.csv"), "w", newline="")
+csvfile = open(os.path.join(dir_path, "XRPUSDT_4H.csv"), "w", newline="")
 candlestick_writer = csv.writer(csvfile, delimiter=",")
 
 candlesticks = client.get_historical_klines(
-    "BTCUSDT", Client.KLINE_INTERVAL_4HOUR, "1 Jan, 2012", "8 Jun, 2021"
+    "XRPUSDT", Client.KLINE_INTERVAL_4HOUR, "1 Jan, 2012", "8 Jun, 2021"
 )
 
 headers = [
