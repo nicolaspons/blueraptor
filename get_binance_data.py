@@ -1,18 +1,14 @@
 import config
 import csv
 import os
+import json
+from datetime import datetime
 from binance.client import Client
 
-dir_path = "./data"
+DIR_PATH = "./data"
+STARTING_DATE = "1 Jan, 2010"
 
-client = Client(config.API_KEY, config.SECRET_KEY)
-
-csvfile = open(os.path.join(dir_path, "XRPUSDT_4H.csv"), "w", newline="")
-candlestick_writer = csv.writer(csvfile, delimiter=",")
-
-candlesticks = client.get_historical_klines(
-    "XRPUSDT", Client.KLINE_INTERVAL_4HOUR, "1 Jan, 2012", "8 Jun, 2021"
-)
+intervals = {"1DAY": Client.KLINE_INTERVAL_1DAY, "4HOUR": Client.KLINE_INTERVAL_4HOUR}
 
 headers = [
     "Open time",
@@ -28,10 +24,33 @@ headers = [
     "Taker buy quote asset volume",
 ]
 
-candlestick_writer.writerow(headers)
+# Tickers loading
+with open("tickers.json", "r") as f:
+    tickers = json.load(f)
+f.close()
 
-for candlestick in candlesticks:
-    candlestick[0] = candlestick[0] / 1000
-    candlestick_writer.writerow(candlestick)
+# Creating client
+client = Client(config.API_KEY, config.SECRET_KEY)
 
-csvfile.close()
+for ticker in tickers:
+    for k, v in intervals.items():
+        print(
+            "Getting historical data for the ticker {} with {} interval".format(
+                ticker, k
+            )
+        )
+        filename = "_".join([ticker, k, ".csv"])
+        csvfile = open(os.path.join(DIR_PATH, filename), "w", newline="")
+        candlestick_writer = csv.writer(csvfile, delimiter=",")
+
+        candlesticks = client.get_historical_klines(
+            ticker, v, STARTING_DATE, datetime.now().strftime("%d %b, %Y")
+        )
+
+        candlestick_writer.writerow(headers)
+
+        for candlestick in candlesticks:
+            candlestick[0] = candlestick[0] / 1000
+            candlestick_writer.writerow(candlestick)
+
+        csvfile.close()
