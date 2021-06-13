@@ -33,8 +33,8 @@
         </nav>
 
         <div class="jumbotron w-100 py-5 mx-auto content container">
-            <h1>Themestr.app</h1>
-            <h4>Theme Builder for Bootstrap</h4>
+            <h1>Screener</h1>
+            <h4>Cryptocurrency screener</h4>
             <p class="lead">
                 Rapidy build custom themes for Bootstrap, the world's most 
                 popular front-end component library for mobile-first, 
@@ -62,11 +62,31 @@
                 </div>
                 <input type="submit" class="btn btn-primary mr-2" value="Scan"></button>
             </form>
-            {% for ticker in tickers %}
-                {% if tickers[ticker] %}
-                    {{ ticker }}
-                {% endif %}    
-            {% endfor %}
+            
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <tbody>
+                        <tr>
+                            <th class="w-25">Tiker</th>
+                            <th class="w-50">Signal</th>
+                        </tr>
+                        {% for ticker in tickers %}
+                            {% if tickers[ticker] %}
+                                <tr>
+                                    <td>{{ ticker }}</td>
+                                    {% if tickers[ticker] > 0 %}
+                                        <td><span class="badge badge-success">bullish</span></td>
+                                    {% else %}    
+                                        <td><span class="badge badge-danger">bearish</span></td>
+                                    {% endif %}    
+                                </tr>
+                            {% endif %}    
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <script src='https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js'></script>
+        <script src="{{ url_for('static', filename='chart.js') }}"></script>
     </body>
 </html>

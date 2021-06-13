@@ -8,7 +8,7 @@ from binance.client import Client
 DIR_PATH = "./data"
 STARTING_DATE = "1 Jan, 2010"
 
-intervals = {"1DAY": Client.KLINE_INTERVAL_1DAY, "4HOUR": Client.KLINE_INTERVAL_4HOUR}
+intervals = {"1DAY": Client.KLINE_INTERVAL_1DAY}
 
 headers = [
     "Open time",
@@ -39,8 +39,8 @@ for ticker in tickers:
                 ticker, k
             )
         )
-        filename = "_".join([ticker, k, ".csv"])
-        csvfile = open(os.path.join(DIR_PATH, filename), "w", newline="")
+        filename = ticker + ".csv"
+        csvfile = open(os.path.join(DIR_PATH, v, filename), "w", newline="")
         candlestick_writer = csv.writer(csvfile, delimiter=",")
 
         candlesticks = client.get_historical_klines(
