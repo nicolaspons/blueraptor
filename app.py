@@ -100,3 +100,8 @@ def snapshot():
         tickers = json.load(f)
     f.close()
     tickers = tickers[:10]
+
+
+@app.route("/scan")
+def scan():
+    return render_template("scan.html")

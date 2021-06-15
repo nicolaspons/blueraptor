@@ -1,7 +1,9 @@
 python-binance
 TA-Lib
+ta
 numpy
 pandas
 backtrader
 matplotlib==3.3.2
 flask
+ccxt

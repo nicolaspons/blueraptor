@@ -39,18 +39,21 @@ for ticker in tickers:
                 ticker, k
             )
         )
-        filename = ticker + ".csv"
-        csvfile = open(os.path.join(DIR_PATH, v, filename), "w", newline="")
-        candlestick_writer = csv.writer(csvfile, delimiter=",")
+        try:
+            filename = ticker + ".csv"
+            csvfile = open(os.path.join(DIR_PATH, v, filename), "w", newline="")
+            candlestick_writer = csv.writer(csvfile, delimiter=",")
 
-        candlesticks = client.get_historical_klines(
-            ticker, v, STARTING_DATE, datetime.now().strftime("%d %b, %Y")
-        )
+            candlesticks = client.get_historical_klines(
+                ticker, v, STARTING_DATE, datetime.now().strftime("%d %b, %Y")
+            )
 
-        candlestick_writer.writerow(headers)
+            candlestick_writer.writerow(headers)
 
-        for candlestick in candlesticks:
-            candlestick[0] = candlestick[0] / 1000
-            candlestick_writer.writerow(candlestick)
+            for candlestick in candlesticks:
+                candlestick[0] = candlestick[0] / 1000
+                candlestick_writer.writerow(candlestick)
 
-        csvfile.close()
+            csvfile.close()
+        except Exception as e:
+            print(e)

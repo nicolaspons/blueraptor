@@ -1,0 +1,77 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}"></link>
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/3.0.0/css/ionicons.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Goldman&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}"></link>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-primary mb-2">
+            <a class="navbar-brand brand" href="#">ConiX</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarColor02">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" title="Current breakpoint tier">
+                            Tier	 
+                            <span class="d-xl-inline d-none">XL</span>
+                            <span class="d-lg-inline d-xl-none d-none">LG</span>
+                            <span class="d-md-inline d-lg-none d-none">MD</span>
+                            <span class="d-sm-inline d-md-none d-none">SM</span>
+                            <span class="d-inline d-sm-none">XS</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="jumbotron w-100 py-5 mx-auto content container">
+            <div class="table-responsive">
+                <table class="table table-hover table-sm">
+                    <tbody>
+                        <tr>
+                            <th class="w-25">Pattern</th>
+                            <th class="w-50">Info</th>
+                            <th class="w-25">Type</th>
+                            <th class="w-25">Selected
+                            </th>
+
+                        </tr>
+                        <tr class="table-primary">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                <div class="custom-control custom-checkbox d-inline">
+                                    <input type="checkbox" class="custom-control-input" id="customCheck" checked="">
+                                    <label class="custom-control-label" for="customCheck">all</label>
+                                </div>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>Galway</td>
+                            <td>08.05.18 <span class="badge badge-pill badge-primary">badge-pill</span></td>
+                            <td>5362</td>
+                            <td>2323</td>
+
+                        </tr>
+                        <tr class="table-primary">
+                            <td>Bern</td>
+                            <td>08.05.18</td>
+                            <td>153</td>
+                            <td>2323</td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>

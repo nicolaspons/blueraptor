@@ -1,3 +1,10 @@
+## Todo
+- [ ] change the repository name from blueraptor to conix
+- [ ] add buying/selling rules to the Golden Cross strategy
+- [ ] generalize the preprocessing
+- [ ] format the binance open time column
+- [ ] rename the venv name
+
 ## Packages
 ```
 pip install python-binance
@@ -13,3 +20,7 @@ export FLASK_APP=app.py
 export FLASK_ENV=developement
 flask run
 ```
+
+## Useful links
+https://bootstrap.themes.guide/bootstrap_purple/
+https://patternswizard.com/
