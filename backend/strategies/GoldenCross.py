@@ -3,6 +3,27 @@ import math
 
 
 class GoldenCross(bt.Strategy):
+    """
+    The golden cross is a chart pattern that is a bullish signal in which a
+    relatively short-term moving average crosses above a long-term moving
+    average. The golden cross is a bullish breakout pattern formed from a
+    crossover involving a security's short-term moving average (such as the
+    15-day moving average) breaking above its long-term moving average
+    such as the 50-day moving average) or resistance level. As long-term
+    indicators carry more weight, the golden cross indicates a bull market on
+    the horizon and is reinforced by high trading volumes.
+
+    See:
+        https://www.investopedia.com/terms/g/goldencross.asp
+
+    Params
+
+      - ``fast``, ``slow``: for the MovingAverages
+      - ``order_percentage``: the percentage of our availabe cash that will be
+      used to fill the order
+      - ``ticker``: the ticker
+    """
+
     params = (
         ("fast", 50),
         ("slow", 200),
