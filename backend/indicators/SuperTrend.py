@@ -2,6 +2,10 @@ import backtrader as bt
 
 
 class SuperTrend(bt.Indicator):
+    """
+    SuperTrend indicator
+    """
+
     lines = (
         "upper_band",
         "lower_band",
@@ -20,6 +24,7 @@ class SuperTrend(bt.Indicator):
         ("time_period", 14),
         ("movav", bt.indicators.SmoothedMovingAverage),
         ("multiplier", 3),
+        ("plot_basic_bands", False),
     )
 
     def __init__(self) -> None:
@@ -34,6 +39,10 @@ class SuperTrend(bt.Indicator):
         self.lines.upper_band = hl2 + (self.params.multiplier * self.lines.atr)
         self.lines.basic_lower_band = hl2 - (self.params.multiplier * self.lines.atr)
         self.lines.lower_band = hl2 - (self.params.multiplier * self.lines.atr)
+
+        if not self.params.plot_basic_bands:
+            self.plotlines.basic_upper_band._plotskip = True
+            self.plotlines.basic_lower_band._plotskip = True
 
     def next(self):
         if self.data.close[0] > self.lines.upper_band[-1]:

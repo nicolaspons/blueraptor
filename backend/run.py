@@ -21,7 +21,7 @@ cerebro.broker.setcash(100000)
 
 btc_usd_prices = pd.read_csv("../data/1d/BTCUSDT.csv", index_col=False)
 btc_usd_prices["Open time"] = pd.to_datetime(btc_usd_prices["Open time"], unit="s")
-# btc_usd_prices = btc_usd_prices.iloc[]
+btc_usd_prices = btc_usd_prices.iloc[100:800]
 
 feed = bt.feeds.PandasData(
     dataname=btc_usd_prices,
@@ -34,9 +34,9 @@ feed = bt.feeds.PandasData(
 )
 
 cerebro.adddata(feed)
-# cerebro.addstrategy(SuperTrendStrategy)
+cerebro.addstrategy(SuperTrendStrategy)
 # cerebro.addstrategy(BuyHold)
-cerebro.addstrategy(GoldenCross)
+# cerebro.addstrategy(GoldenCross)
 
 cerebro.run()
 
