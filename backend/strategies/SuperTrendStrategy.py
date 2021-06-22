@@ -9,6 +9,7 @@ class SuperTrendStrategy(bt.Strategy):
         ("movav", bt.indicators.SmoothedMovingAverage),
         ("multiplier", 3),
         ("ticker", "BTCUSDT"),
+        ("name", "Super Trend"),
     )
 
     def __init__(self) -> None:

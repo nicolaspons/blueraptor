@@ -4,6 +4,7 @@ ta
 numpy
 pandas
 backtrader
+pyfolio
 matplotlib==3.3.2
 flask
 ccxt
