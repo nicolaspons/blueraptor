@@ -1,5 +1,4 @@
 import config
-import csv
 import os
 import json
 import pandas as pd

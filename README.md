@@ -32,3 +32,4 @@ flask run
 ## Useful links
 https://bootstrap.themes.guide/bootstrap_purple/
 https://patternswizard.com/
+https://medium.com/amberdata/backtesting-your-cryptocurrency-trading-strategy-for-fun-and-profits-with-the-amberdata-api-and-6ea912aae28e

@@ -1,8 +1,10 @@
 import backtrader as bt
 import math
 
+from .Strategy import Strategy
 
-class GoldenCross(bt.Strategy):
+
+class GoldenCross(Strategy):
     """
     The golden cross is a chart pattern that is a bullish signal in which a
     relatively short-term moving average crosses above a long-term moving
@@ -19,16 +21,12 @@ class GoldenCross(bt.Strategy):
     Params
 
       - ``fast``, ``slow``: for the MovingAverages
-      - ``order_percentage``: the percentage of our availabe cash that will be
-      used to fill the order
-      - ``ticker``: the ticker
     """
 
     params = (
+        ("name", "Golden Cross"),
         ("fast", 50),
         ("slow", 200),
-        ("order_percentage", 0.95),
-        ("ticker", "BTCUSDT"),
     )
 
     def __init__(self) -> None:
@@ -52,9 +50,7 @@ class GoldenCross(bt.Strategy):
     def next(self):
         if self.position.size == 0:
             if self.crossover > 0:
-                amount_to_invest = self.params.order_percentage * self.broker.cash
-                self.size = math.floor(amount_to_invest / self.data.close)
-
+                self.compute_position_size()
                 print(
                     "Buy {} shares of {} at {}".format(
                         self.size, self.params.ticker, self.data.close[0]

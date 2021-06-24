@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Tuple
 import backtrader as bt
 from backtrader.feeds.pandafeed import PandasData
 from backtrader.plot import Plot_OldSync
@@ -7,7 +7,7 @@ import pyfolio as pf
 import pandas as pd
 import os
 
-from .utils import INTERVALS, trading_strategy
+from utils import BINANCE_TICKERS, INTERVALS
 
 
 class CustomPlotScheme(Plot_OldSync):
@@ -39,13 +39,12 @@ class Backtest:
     def __init__(
         self,
         cash=1000,
-        intervals: List(str) = INTERVALS,
-        tikers: List[str] = None,
+        commission=0.00075,
         path_to_data: str = "",
         path_to_save: str = "",
-        commission=0.00075,
-        strategies: List[tuple(str, bt.Strategy)] = None,
-        analyser=("pyfolio", bt.analyzers.PyFolio),
+        intervals: List[str] = INTERVALS,
+        tikers: List[str] = BINANCE_TICKERS,
+        strategies: List[Tuple[str, bt.Strategy]] = None,
     ) -> None:
         self.cash = cash
         self.intervals = intervals
@@ -54,7 +53,6 @@ class Backtest:
         self.path_to_save = path_to_save
         self.commission = commission
         self.strategies = strategies
-        self.analyser = analyser
 
     def _preprocessing(self, strategy, feed) -> None:
         self.cerebro = bt.Cerebro()
@@ -64,11 +62,11 @@ class Backtest:
 
         self.cerebro.addstrategy(strategy[1])
 
-        self.cerebro.addanalyzer(self.analyser[1], _name=self.analyser[0])
+        self.cerebro.addanalyzer(bt.analyzers.PyFolio, _name="pyfolio")
 
         self.cerebro.adddata(feed)
 
-    def _loading_data(self, ticker, interval) -> PandasData:
+    def _loading_binance_data(self, ticker, interval) -> PandasData:
         filename = os.path.join(self.path_to_data, interval, ticker)
 
         try:
@@ -104,22 +102,15 @@ class Backtest:
 
         for strategy in self.strategies:
             print("Backtesting the {} strategy".format(strategy[0]))
-            saving_strategy_directory = os.path.join(saving_directory, strategy)
-            os.mkdir(saving_strategy_directory)
+            filename = "_".join(strategy[0].lower().split())
+            strategy_path = os.path.join(saving_directory, filename)
             for interval in self.intervals:
                 print("Backtesting on {} interval".format(interval))
-                saving_interval_directory = os.path.join(
-                    saving_strategy_directory, interval
-                )
-                os.mkdir(saving_interval_directory)
+                strategy_statistics_path = "_".join(strategy_path, interval)            
                 for ticker in self.tickers:
                     print(ticker)
-                    saving_ticker_directory = os.path.join(
-                        saving_interval_directory, ticker
-                    )
-                    os.mkdir(saving_interval_directory)
 
-                    feed = self._loading_data(ticker, interval)
+                    feed = self._loading_binance_data(ticker, interval)
                     self._preprocessing(strategy, feed)
                     results = self.cerebro.run()
                     strat = results[0]
