@@ -1,5 +1,5 @@
 import backtrader as bt
-from indicators.SuperTrend import SuperTrend
+from indicators.SuperTrend import ST
 from .Strategy import Strategy
 
 
@@ -13,27 +13,15 @@ class SuperTrend(Strategy):
 
     def __init__(self) -> None:
         super().__init__()
-        self.super_trend = SuperTrend(self.data)
+        self.super_trend = ST(self.data)
 
     def next(self):
         if not self.position:
             if self.super_trend.lines.up_trend[0]:
-                self.compute_position_size()
-                print(
-                    "Buy {} shares of {} at {}".format(
-                        self.broker.cash, self.params.ticker, self.data.close[0]
-                    )
-                )
-                self.buy(size=self.size)
+                self.buy()
 
-        else:
-            if (
+        elif (
                 not self.super_trend.lines.up_trend[0]
                 and self.super_trend.lines.up_trend[-1]
-            ):
-                print(
-                    "Sell {} shares of {} at {}".format(
-                        self.broker.cash, self.params.ticker, self.data.close[0]
-                    )
-                )
-                self.close()
+        ):
+            self.close()

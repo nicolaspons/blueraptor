@@ -1,7 +1,7 @@
 import backtrader as bt
 
 
-class SuperTrend(bt.Indicator):
+class ST(bt.Indicator):
     """
     SuperTrend indicator
     """

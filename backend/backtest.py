@@ -7,6 +7,8 @@ import pyfolio as pf
 import pandas as pd
 import os
 
+from strategies.SuperTrend import SuperTrend
+
 from utils import BINANCE_TICKERS, INTERVALS
 
 
@@ -57,33 +59,44 @@ class Backtest:
     def _preprocessing(self, strategy, feed) -> None:
         self.cerebro = bt.Cerebro()
 
+        # Set cash
         self.cerebro.broker.setcash(self.cash)
+
+        # Set commission
         self.cerebro.broker.setcommission(commission=self.commission, margin=False)
 
-        self.cerebro.addstrategy(strategy[1])
+        # Set strategy
+        print("Setting the {} strategy".format(strategy[0]))
+        self.cerebro.addstrategy(SuperTrend)
 
+        # Set analyser
+        print("Setting the analyser pyfolio")
         self.cerebro.addanalyzer(bt.analyzers.PyFolio, _name="pyfolio")
 
+        # Set position size
+        #self.cerebro.addsizer(bt.sizers.PercentSizer, percents=100)
+
+        # Add data
         self.cerebro.adddata(feed)
 
     def _loading_binance_data(self, ticker, interval) -> PandasData:
-        filename = os.path.join(self.path_to_data, interval, ticker)
+        filename = os.path.join(self.path_to_data, interval, "{}.csv".format(ticker))
 
         try:
             data = pd.read_csv(filename, index_col=False)
+            data["Open time"] = pd.to_datetime(data["Open time"], unit="s")
+            return bt.feeds.PandasData(
+                dataname=data,
+                datetime="Open time",
+                open=1,
+                high=2,
+                low=3,
+                close=4,
+                volume=5,
+            )
         except FileNotFoundError:
             print("Path {} not found".format(filename))
 
-        data["Open time"] = pd.to_datetime(data["Open time"], unit="s")
-        return bt.feeds.PandasData(
-            dataname=data,
-            datetime="Open time",
-            open=1,
-            high=2,
-            low=3,
-            close=4,
-            volume=5,
-        )
 
     def run(self) -> None:
         print("Starting backtest...")
@@ -106,7 +119,7 @@ class Backtest:
             strategy_path = os.path.join(saving_directory, filename)
             for interval in self.intervals:
                 print("Backtesting on {} interval".format(interval))
-                strategy_statistics_path = "_".join(strategy_path, interval)            
+                strategy_statistics_path = "_".join([strategy_path, interval])            
                 for ticker in self.tickers:
                     print(ticker)
 
@@ -122,11 +135,11 @@ class Backtest:
                         transactions,
                         gross_lev,
                     ) = pyfoliozer.get_pf_items()
-
-                    self._save_csv(returns, "returns", saving_ticker_directory)
-                    self._save_csv(positions, "positions", saving_ticker_directory)
+                    print("Saving files")
+                    self._save_csv(returns, "returns", strategy_statistics_path)
+                    self._save_csv(positions, "positions", strategy_statistics_path)
                     self._save_csv(
-                        transactions, "transactions", saving_ticker_directory
+                        transactions, "transactions", strategy_statistics_path
                     )
 
                     pf.create_simple_tear_sheet(
@@ -136,4 +149,4 @@ class Backtest:
                     self.cerebro.plot(plotter=CustomPlotScheme(), iplot=False)
 
     def _save_csv(self, df, filename: str, directory: str) -> None:
-        df.to_csv(os.path.join(directory, filename + ".csv"))
+        df.to_csv(directory + "_" + filename + ".csv")

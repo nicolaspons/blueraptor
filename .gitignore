@@ -1,6 +1,7 @@
 node_modules/
 venv/
 data/
+statistics/
 .vscode/
 .DS_Store
 __pycache__
