@@ -1,5 +1,6 @@
 from typing import List, Tuple
 import backtrader as bt
+from backtrader.comminfo import CommissionInfo
 from backtrader.feeds.pandafeed import PandasData
 from backtrader.plot import Plot_OldSync
 from datetime import datetime
@@ -12,11 +13,32 @@ from strategies.SuperTrend import SuperTrend
 from utils import BINANCE_TICKERS, INTERVALS
 
 
+class CommInfoFractional(CommissionInfo):
+    """
+    Fractional scheme that allows us to buy fractions of cryptocurrencies.
+
+    It is added to the broker like this:
+    ```
+        if args.fractional: # use the fractional scheme if needed
+            cerebro.broker.addcommissioninfo(CommInfoFractional())
+    ```
+    i.e: an instance (notice the () to instantiate) of the subclassed scheme is
+    Added.
+    """
+
+    def getsize(self, price, cash):
+        """Returns fractional size for cash operation price"""
+        size = self.p.leverage * (cash / price)
+        print("size: {}".format(size))
+        return size
+
+
 class CustomPlotScheme(Plot_OldSync):
-    def __init__(self):
+    def __init__(self, directory: str):
         super().__init__()
         self.params.scheme.style = "candle"
         self.params.scheme.barup = "green"
+        self._directory = directory
 
     def plot(
         self, strategy, figid=0, numfigs=1, iplot=True, start=None, end=None, **kwargs
@@ -28,7 +50,7 @@ class CustomPlotScheme(Plot_OldSync):
             height = 16
             dpi = 300
             fig.set_size_inches(width, height)
-            filename = "/Users/pons_n/Desktop/" + "test" + str(i) + ".png"
+            filename = "{}_chart_{}.png".format(self._directory, i)
             print("Trying to save the plot")
             fig.savefig(filename, dpi=dpi)
 
@@ -47,6 +69,7 @@ class Backtest:
         intervals: List[str] = INTERVALS,
         tikers: List[str] = BINANCE_TICKERS,
         strategies: List[Tuple[str, bt.Strategy]] = None,
+        fractional: bool = True,
     ) -> None:
         self.cash = cash
         self.intervals = intervals
@@ -55,6 +78,7 @@ class Backtest:
         self.path_to_save = path_to_save
         self.commission = commission
         self.strategies = strategies
+        self.fractional = fractional
 
     def _preprocessing(self, strategy, feed) -> None:
         self.cerebro = bt.Cerebro()
@@ -73,8 +97,13 @@ class Backtest:
         print("Setting the analyser pyfolio")
         self.cerebro.addanalyzer(bt.analyzers.PyFolio, _name="pyfolio")
 
+        # Set the fractional scheme if requested
+        if self.fractional:
+            print("Setting the fractional scheme")
+            self.cerebro.broker.addcommissioninfo(CommInfoFractional())
+
         # Set position size
-        #self.cerebro.addsizer(bt.sizers.PercentSizer, percents=100)
+        # self.cerebro.addsizer(bt.sizers.PercentSizer, percents=100)
 
         # Add data
         self.cerebro.adddata(feed)
@@ -97,16 +126,15 @@ class Backtest:
         except FileNotFoundError:
             print("Path {} not found".format(filename))
 
-
     def run(self) -> None:
         print("Starting backtest...")
 
         try:
             print("Backtest {} strategies".format(len(self.strategies))) if len(
-                self.strategies > 1
-            ) else print("Backtest {} strategies".format(len(self.strategies)))
-        except TypeError:
-            print("strategies list is None or empty")
+                self.strategies
+            ) > 1 else print("Backtest {} strategies".format(len(self.strategies)))
+        except TypeError as err:
+            print("strategies list is None or empty: {}".format(err))
 
         saving_directory = os.path.join(
             self.path_to_save, datetime.now().strftime("%y-%m-%d-%H-%M")
@@ -119,7 +147,7 @@ class Backtest:
             strategy_path = os.path.join(saving_directory, filename)
             for interval in self.intervals:
                 print("Backtesting on {} interval".format(interval))
-                strategy_statistics_path = "_".join([strategy_path, interval])            
+                strategy_statistics_path = "_".join([strategy_path, interval])
                 for ticker in self.tickers:
                     print(ticker)
 
@@ -146,7 +174,9 @@ class Backtest:
                         returns, positions=positions, transactions=transactions
                     )
 
-                    self.cerebro.plot(plotter=CustomPlotScheme(), iplot=False)
+                    self.cerebro.plot(
+                        plotter=CustomPlotScheme(strategy_statistics_path), iplot=False
+                    )
 
     def _save_csv(self, df, filename: str, directory: str) -> None:
         df.to_csv(directory + "_" + filename + ".csv")

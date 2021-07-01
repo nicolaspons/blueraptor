@@ -1,9 +1,7 @@
-import json
-
 from strategies.SuperTrend import SuperTrend
 from backtest import Backtest
 
-CASH = 100000
+CASH = 1000
 PATH_TO_DATA = "../data"
 PATH_TO_SAVE = "./statistics"
 STRATEGIES = [("Super Trend", SuperTrend)]

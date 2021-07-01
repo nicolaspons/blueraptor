@@ -9,6 +9,7 @@ class SuperTrend(Strategy):
         ("time_period", 14),
         ("movav", bt.indicators.SmoothedMovingAverage),
         ("multiplier", 3),
+        ("target", 1),
     )
 
     def __init__(self) -> None:
@@ -18,10 +19,12 @@ class SuperTrend(Strategy):
     def next(self):
         if not self.position:
             if self.super_trend.lines.up_trend[0]:
-                self.buy()
+                # self.buy()
+                self.order_target_percent(target=self.p.target)
 
         elif (
-                not self.super_trend.lines.up_trend[0]
-                and self.super_trend.lines.up_trend[-1]
+            not self.super_trend.lines.up_trend[0]
+            and self.super_trend.lines.up_trend[-1]
         ):
             self.close()
+            # self.order_target_percent(target=-self.p.target)
