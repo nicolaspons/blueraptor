@@ -9,8 +9,8 @@ STRATEGIES = [("Super Trend", SuperTrend)]
 
 bt = Backtest(
     cash=CASH,
-    tikers=["BTCUSDT"],
-    intervals=["1d"],
+    tikers=["BTCUSDT", "ETHUSDT"],
+    intervals=["1d", "4h"],
     path_to_data=PATH_TO_DATA,
     path_to_save=PATH_TO_SAVE,
     strategies=STRATEGIES,

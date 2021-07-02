@@ -26,11 +26,25 @@ class CommInfoFractional(CommissionInfo):
     Added.
     """
 
+    params = (
+        ("stocklike", True),
+        ("commtype", bt.CommInfoBase.COMM_PERC),  # apply % commission
+    )
+
+    def __init__(self):
+        super().__init__()
+        assert abs(self.p.commission) < 1.0  # commission is a percentage
+        assert self.p.mult == 1.0
+        assert self.p.margin is None
+        assert self.p.commtype == bt.CommInfoBase.COMM_PERC
+        assert self.p.stocklike
+        assert self.p.percabs
+        assert self.p.leverage == 1.0
+        assert self.p.automargin == False
+
     def getsize(self, price, cash):
         """Returns fractional size for cash operation price"""
-        size = self.p.leverage * (cash / price)
-        print("size: {}".format(size))
-        return size
+        return self.p.leverage * (cash / price)
 
 
 class CustomPlotScheme(Plot_OldSync):
@@ -100,7 +114,7 @@ class Backtest:
         # Set the fractional scheme if requested
         if self.fractional:
             print("Setting the fractional scheme")
-            self.cerebro.broker.addcommissioninfo(CommInfoFractional())
+            self.cerebro.broker.addcommissioninfo(CommInfoFractional(commission=0.005))
 
         # Set position size
         # self.cerebro.addsizer(bt.sizers.PercentSizer, percents=100)
