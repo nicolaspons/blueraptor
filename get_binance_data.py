@@ -82,13 +82,8 @@ def update_binance_data(tickers_intervals):
     """Requests the data from the binance API and updates the corresponding csv file."""
     for ticker, interval in tickers_intervals:
         try:
-            csvfile = open(
-                os.path.join(DIR_PATH, interval, "{}.csv".format(ticker)),
-                "w",
-                newline="",
-            )
             path_to_file = os.path.join(DIR_PATH, interval, f"{ticker}.csv")
-            csvfile = pd.read_csv(path_to_file, index_col=False)
+            csvfile = pd.read_csv(path_to_file, index_col=False, delimiter=",")
             starting_date = datetime.utcfromtimestamp(
                 csvfile.iloc[-1]["Open time"]
             ).strftime("%d %b, %Y")
@@ -99,14 +94,29 @@ def update_binance_data(tickers_intervals):
             )
 
             candlesticks = client.get_historical_klines(
-                ticker, interval, starting_date, datetime.now().strftime("%d %b, %Y")
+                ticker,
+                interval,
+                starting_date,
+                datetime.now().strftime("%d %b, %Y"),
+                limit=1000,
             )
 
+            format_date = lambda t: t / 1000
+            format_price = lambda p: float(f"{float(p):.2f}")
+
             # overriding the last row.
-            candlesticks[0][0] = candlesticks[0][0] / 1000
+            candlesticks[0][0] = format_date(candlesticks[0][0])
+            candlesticks[0][1] = format_price(candlesticks[0][1])
+            candlesticks[0][2] = format_price(candlesticks[0][2])
+            candlesticks[0][3] = format_price(candlesticks[0][3])
+            candlesticks[0][4] = format_price(candlesticks[0][4])
             csvfile.loc[len(csvfile) - 1] = candlesticks[0][:-1]
             for candlestick in candlesticks[1:]:
-                candlestick[0] = candlestick[0] / 1000
+                candlestick[0] = format_date(candlestick[0])
+                candlestick[1] = format_price(candlestick[1])
+                candlestick[2] = format_price(candlestick[2])
+                candlestick[3] = format_price(candlestick[3])
+                candlestick[4] = format_price(candlestick[4])
                 csvfile.loc[len(csvfile)] = candlestick[:-1]
 
             csvfile.to_csv(path_to_file, index=False)
@@ -124,7 +134,9 @@ def main(args=None):
             tickers = json.load(f)
         f.close()
 
-    create_directories(args.intervals)
+    intervals = [interval.lower() for interval in args.intervals]
+
+    create_directories(intervals)
 
     tickers_intervals = list(product(tickers, intervals))
 
