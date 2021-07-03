@@ -105,7 +105,7 @@ class Backtest:
 
         # Set strategy
         print("Setting the {} strategy".format(strategy[0]))
-        self.cerebro.addstrategy(SuperTrend)
+        self.cerebro.addstrategy(strategy[1])
 
         # Set analyser
         print("Setting the analyser pyfolio")
@@ -151,7 +151,7 @@ class Backtest:
             print("strategies list is None or empty: {}".format(err))
 
         saving_directory = os.path.join(
-            self.path_to_save, datetime.now().strftime("%y-%m-%d-%H-%M")
+            self.path_to_save, datetime.now().strftime("%y-%m-%d-%H-%M-%S")
         )
         os.mkdir(saving_directory)
 

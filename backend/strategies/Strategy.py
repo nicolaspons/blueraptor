@@ -1,5 +1,4 @@
 from backtrader import Strategy
-from math import floor
 
 
 class Strategy(Strategy):
@@ -15,7 +14,7 @@ class Strategy(Strategy):
       - ``ticker``: the ticker
     """
 
-    params = (("name", ""),)
+    params = (("name", ""), ("notifytrade", "False"))
 
     def log(self, txt, dt=None):
         """Logging function fot this strategy"""
@@ -23,17 +22,18 @@ class Strategy(Strategy):
         print("%s, %s" % (dt.isoformat(), txt))
 
     def notify_trade(self, trade):
-        if trade.justopened:
-            self.log(
-                "Trade Opened  - Size {} @Price {}".format(trade.size, trade.price)
-            )
-        elif trade.isclosed:
-            self.log("Trade Closed  - Profit {}".format(trade.pnlcomm))
+        if self.p.notifytrade == True:
+            if trade.justopened:
+                self.log(
+                    "Trade Opened  - Size {} @Price {}".format(trade.size, trade.price)
+                )
+            elif trade.isclosed:
+                self.log("Trade Closed  - Profit {}".format(trade.pnlcomm))
 
-        else:  # trade updated
-            self.log(
-                "Trade Updated - Size {} @Price {}".format(trade.size, trade.price)
-            )
+            else:  # trade updated
+                self.log(
+                    "Trade Updated - Size {} @Price {}".format(trade.size, trade.price)
+                )
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
